@@ -6,6 +6,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/go-kit/kit v0.11.0
 	github.com/go-logfmt/logfmt v0.5.1 // indirect
+	github.com/go-ping/ping v0.0.0-20210506233800-ff8be3320020
 	github.com/miekg/dns v1.1.43
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.11.0
