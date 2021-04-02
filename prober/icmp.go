@@ -29,9 +29,11 @@ import (
 
 func ProbeICMP(ctx context.Context, target string, module config.Module, registry *prometheus.Registry, logger log.Logger) (success bool) {
 	var (
-		durationGaugeVec = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-			Name: "probe_icmp_duration_seconds",
-			Help: "Duration of icmp request by phase",
+		durationMetricName = "probe_icmp_duration_seconds"
+		durationMetricHelp = "Duration of icmp request by phase"
+		durationGaugeVec   = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+			Name: durationMetricName,
+			Help: durationMetricHelp,
 		}, []string{"phase"})
 
 		hopLimitGauge = prometheus.NewGauge(prometheus.GaugeOpts{
@@ -102,7 +104,12 @@ func ProbeICMP(ctx context.Context, target string, module config.Module, registr
 		pinger.Size = module.ICMP.PayloadSize
 	}
 
-	pinger.Count = 1
+	pinger.Count = module.ICMP.PacketCount
+	if pinger.Count == 0 {
+		pinger.Count = 1
+	}
+
+	pinger.Interval = 1
 
 	pinger.RecordRtts = false
 
@@ -115,6 +122,49 @@ func ProbeICMP(ctx context.Context, target string, module config.Module, registr
 	if err := pinger.Run(); err != nil {
 		level.Info(logger).Log("msg", "failed to run ping", "err", err.Error())
 		return false
+	}
+
+	stats := pinger.Statistics()
+
+	durationGaugeVec.WithLabelValues("rtt").Set(stats.AvgRtt.Seconds())
+
+	if module.ICMP.PacketCount > 1 {
+		sent := prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: "probe_icmp_sent_packets",
+			Help: "Provides the number of sent packets",
+		})
+
+		received := prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: "probe_icmp_received_packets",
+			Help: "Provides the number of received packets",
+		})
+
+		min := prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: durationMetricName + "_min",
+			Help: durationMetricHelp + " (mininum)",
+		})
+
+		max := prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: durationMetricName + "_max",
+			Help: durationMetricHelp + " (maximum)",
+		})
+
+		stddev := prometheus.NewGauge(prometheus.GaugeOpts{
+			Name: durationMetricName + "_stddev",
+			Help: durationMetricHelp + " (standard deviation)",
+		})
+
+		registry.MustRegister(sent)
+		registry.MustRegister(received)
+		registry.MustRegister(min)
+		registry.MustRegister(max)
+		registry.MustRegister(stddev)
+
+		sent.Set(float64(stats.PacketsSent))
+		received.Set(float64(stats.PacketsRecv))
+		min.Set(stats.MinRtt.Seconds())
+		max.Set(stats.MaxRtt.Seconds())
+		stddev.Set(stats.StdDevRtt.Seconds())
 	}
 
 	return pinger.Count == pinger.PacketsSent && pinger.PacketsRecv == pinger.PacketsSent

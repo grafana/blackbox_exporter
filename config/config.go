@@ -236,6 +236,7 @@ type ICMPProbe struct {
 	SourceIPAddress    string `yaml:"source_ip_address,omitempty"`
 	PayloadSize        int    `yaml:"payload_size,omitempty"`
 	DontFragment       bool   `yaml:"dont_fragment,omitempty"`
+	PacketCount        int    `yaml:"packet_count,omitempty"`
 }
 
 type DNSProbe struct {
@@ -361,6 +362,11 @@ func (s *ICMPProbe) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	if runtime.GOOS == "windows" && s.DontFragment {
 		return errors.New("\"dont_fragment\" is not supported on windows platforms")
 	}
+
+	if s.PacketCount < 0 || s.PacketCount > 10 {
+		return errors.New("invalid \"packet_count\" value")
+	}
+
 	return nil
 }
 
