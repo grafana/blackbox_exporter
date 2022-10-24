@@ -10,6 +10,7 @@ require (
 	github.com/prometheus/client_model v0.2.0
 	github.com/prometheus/common v0.34.0
 	github.com/prometheus/exporter-toolkit v0.7.1
+	github.com/yl2chen/cidranger v1.0.2
 	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4
 	golang.org/x/text v0.3.7
 	google.golang.org/grpc v1.46.0

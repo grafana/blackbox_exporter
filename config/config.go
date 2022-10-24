@@ -96,7 +96,8 @@ func init() {
 }
 
 type Config struct {
-	Modules map[string]Module `yaml:"modules"`
+	Modules  map[string]Module `yaml:"modules"`
+	IPFilter *IPFilter         `yaml:"ip_filter,omitempty"`
 }
 
 type SafeConfig struct {
@@ -193,13 +194,14 @@ func MustNewRegexp(s string) Regexp {
 }
 
 type Module struct {
-	Prober  string        `yaml:"prober,omitempty"`
-	Timeout time.Duration `yaml:"timeout,omitempty"`
-	HTTP    HTTPProbe     `yaml:"http,omitempty"`
-	TCP     TCPProbe      `yaml:"tcp,omitempty"`
-	ICMP    ICMPProbe     `yaml:"icmp,omitempty"`
-	DNS     DNSProbe      `yaml:"dns,omitempty"`
-	GRPC    GRPCProbe     `yaml:"grpc,omitempty"`
+	Prober   string        `yaml:"prober,omitempty"`
+	Timeout  time.Duration `yaml:"timeout,omitempty"`
+	HTTP     HTTPProbe     `yaml:"http,omitempty"`
+	TCP      TCPProbe      `yaml:"tcp,omitempty"`
+	ICMP     ICMPProbe     `yaml:"icmp,omitempty"`
+	DNS      DNSProbe      `yaml:"dns,omitempty"`
+	GRPC     GRPCProbe     `yaml:"grpc,omitempty"`
+	IPFilter *IPFilter     `yaml:"ip_filter,omitempty"`
 }
 
 type HTTPProbe struct {

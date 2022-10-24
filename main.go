@@ -137,6 +137,10 @@ func probeHandler(w http.ResponseWriter, r *http.Request, c *config.Config, logg
 	sl := newScrapeLogger(logger, moduleName, target)
 	level.Info(sl).Log("msg", "Beginning probe", "probe", module.Prober, "timeout_seconds", timeoutSeconds)
 
+	if module.IPFilter == nil {
+		module.IPFilter = c.IPFilter
+	}
+
 	start := time.Now()
 	registry := prometheus.NewRegistry()
 	registry.MustRegister(probeSuccessGauge)
