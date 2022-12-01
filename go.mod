@@ -41,3 +41,5 @@ require (
 	google.golang.org/genproto v0.0.0-20200825200019-8632dd797987 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )
+
+replace github.com/prometheus/common => github.com/grafana/prometheus-common v0.37.1-0.20221201214702-e4beb74bb93c
