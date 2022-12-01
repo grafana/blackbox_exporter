@@ -33,6 +33,16 @@ modules:
     http:
       proxy_url: "http://127.0.0.1:3128"
       skip_resolve_phase_with_proxy: true
+  http_with_proxy_headers:
+    prober: http
+    http:
+      proxy_url: "http://127.0.0.1:3128"
+      proxy_connect_headers:
+        header_1:
+          - value_1
+        header_2:
+          - value_1
+          - value_2
   http_post_2xx:
     prober: http
     timeout: 5s
