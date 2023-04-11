@@ -39,6 +39,12 @@ import (
 )
 
 var (
+	configReloadSuccess = promauto.NewGauge(prometheus.GaugeOpts{
+		Namespace: "blackbox_exporter",
+		Name:      "config_last_reload_successful",
+		Help:      "Blackbox exporter config loaded successfully.",
+	})
+
 	configReloadSeconds = promauto.NewGauge(prometheus.GaugeOpts{
 		Namespace: "blackbox_exporter",
 		Name:      "config_last_reload_success_timestamp_seconds",
@@ -97,7 +103,9 @@ func (sc *SafeConfig) ReloadConfig(confFile string, logger log.Logger) (err erro
 	var c = &Config{}
 	defer func() {
 		if err != nil {
+			configReloadSuccess.Set(0)
 		} else {
+			configReloadSuccess.Set(1)
 			configReloadSeconds.SetToCurrentTime()
 		}
 	}()
