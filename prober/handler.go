@@ -48,7 +48,6 @@ var (
 
 func Handler(w http.ResponseWriter, r *http.Request, c *config.Config, logger log.Logger,
 	rh *ResultHistory, timeoutOffset float64, params url.Values) {
-	prometheus.Register(moduleUnknownCounter)
 
 	if params == nil {
 		params = r.URL.Query()
