@@ -98,6 +98,12 @@ type SafeConfig struct {
 	C *Config
 }
 
+func NewSafeConfig(reg prometheus.Registerer) *SafeConfig {
+	reg.MustRegister(configReloadSuccess)
+	reg.MustRegister(configReloadSeconds)
+	return &SafeConfig{C: &Config{}}
+}
+
 func (sc *SafeConfig) ReloadConfig(confFile string, logger log.Logger) (err error) {
 	var c = &Config{}
 	defer func() {
