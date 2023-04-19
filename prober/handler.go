@@ -40,14 +40,10 @@ var (
 		"dns":  ProbeDNS,
 		"grpc": ProbeGRPC,
 	}
-	moduleUnknownCounter = prometheus.NewCounter(prometheus.CounterOpts{
-		Name: "blackbox_module_unknown_total",
-		Help: "Count of unknown modules requested by probes",
-	})
 )
 
 func Handler(w http.ResponseWriter, r *http.Request, c *config.Config, logger log.Logger,
-	rh *ResultHistory, timeoutOffset float64, params url.Values) {
+	rh *ResultHistory, timeoutOffset float64, params url.Values, moduleUnknownCounter *prometheus.Counter) {
 
 	if params == nil {
 		params = r.URL.Query()
@@ -60,7 +56,9 @@ func Handler(w http.ResponseWriter, r *http.Request, c *config.Config, logger lo
 	if !ok {
 		http.Error(w, fmt.Sprintf("Unknown module %q", moduleName), http.StatusBadRequest)
 		level.Debug(logger).Log("msg", "Unknown module", "module", moduleName)
-		moduleUnknownCounter.Add(1)
+		if moduleUnknownCounter != nil {
+			(*moduleUnknownCounter).Add(1)
+		}
 		return
 	}
 
