@@ -1,11 +1,11 @@
 module github.com/prometheus/blackbox_exporter
 
-go 1.21
+go 1.22
 
 require (
 	github.com/alecthomas/kingpin/v2 v2.4.0
 	github.com/alecthomas/units v0.0.0-20231202071711-9a357b53e9c9
-	github.com/andybalholm/brotli v1.1.0
+	github.com/andybalholm/brotli v1.2.7
 	github.com/go-kit/log v0.2.1
 	github.com/miekg/dns v1.1.58
 	github.com/prometheus/client_golang v1.19.1
